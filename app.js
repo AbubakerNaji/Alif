@@ -2,14 +2,29 @@ const express = require("express");
 const connectMongoDB = require('./utils/mongoConfig');
 const globalErrorHandler = require('./controllers/errorController');
 const path = require('path');
+
+const cors = require('cors'); 
+const helmet = require('helmet'); 
+const morgan = require('morgan'); 
+const compression = require('compression'); 
+
+
 const authRoutes = require('./routes/authRoutes');
 const kidsRoutes = require('./routes/kidsRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const myUserRoutes = require('./routes/myUserRoutes');
 
+
+
 require('dotenv').config();
 
 const app = express();
+
+app.use(cors()); 
+app.use(helmet()); 
+app.use(morgan('dev')); 
+app.use(compression()); 
+
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
