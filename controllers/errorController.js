@@ -5,7 +5,7 @@ const sendDevResponse = (err,res) =>{
   res.status(err.statusCode).json({
     status: err.statusCode,
     error: err,
-    message: err.AppMessage,
+    message: err.AppMessage || "Something went wrong and no message was provided",
     stack: err.stack
   })
 }
