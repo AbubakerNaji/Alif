@@ -13,6 +13,7 @@ const authRoutes = require('./routes/authRoutes');
 const kidsRoutes = require('./routes/kidsRoutes');
 const locationRoutes = require('./routes/locationRoutes');
 const myUserRoutes = require('./routes/myUserRoutes');
+const serviceTypeRoute = require('./routes/servicesRoutes/serviceTypeRoute');
 
 
 
@@ -35,6 +36,8 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/kids', kidsRoutes);
 app.use('/api/v1/location', locationRoutes);
 app.use('/api/v1/user', myUserRoutes);
+app.use('/api/v1/service/type', serviceTypeRoute);
+
 
 
 

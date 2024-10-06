@@ -12,15 +12,26 @@ exports.deleteOne = (Model) =>
     });
   });
 
-  
-
 exports.updateOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const doc = await Model.findByIdAndUpdate(req.params.id, req.body);
-    if (!doc) return next(new AppError("No Entitie found", 404));
+    const updates = { ...req.body };
+
+    if (req.file) {
+      updates.image = req.file.path;
+    } else if (req.files) {
+      updates.images = req.files.map((file) => file.path);
+    }
+
+    const doc = await Model.findByIdAndUpdate(req.params.id, updates, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!doc) return next(new AppError("No entity found", 404));
+
     res.status(202).json({
       status: "success",
-      message: "Entitie was Updated Successfully",
+      message: "Entity was updated successfully",
       data: {
         data: doc,
       },
@@ -29,7 +40,14 @@ exports.updateOne = (Model) =>
 
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
-    const newModel = new Model(req.body);
+    const newModelData = { ...req.body };
+    if (req.file) {
+      newModelData.image = req.file.path;
+    } else if (req.files) {
+      newModelData.images = req.files.map((file) => file.path);
+    }
+
+    const newModel = new Model(newModelData);
     await newModel.save();
     res.status(201).json({
       status: "success",
@@ -39,8 +57,7 @@ exports.createOne = (Model) =>
       },
     });
   });
-  //create onewith auth
-
+//create onewith auth
 
 exports.getAll = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -70,7 +87,6 @@ exports.getWithFilter = (Model) =>
   catchAsync(async (req, res, next) => {
     const filter = req.filter || {};
 
-
     const getModels = await Model.find(filter);
     //const getModels = queryModel.exec();
 
@@ -83,10 +99,8 @@ exports.getWithFilter = (Model) =>
     });
   });
 
-
-exports.setFilter = catchAsync( async (req,res,next) => {
+exports.setFilter = catchAsync(async (req, res, next) => {
   let filter = req.body || {};
   req.filter = filter;
   next();
-})
-
+});

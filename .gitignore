@@ -2,3 +2,5 @@
 .env
 #Ignore node_modules
 node_modules
+#egnore everything in public folder
+public/*
