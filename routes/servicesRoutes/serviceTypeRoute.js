@@ -7,8 +7,8 @@ const upload = require('../../controllers/multiController');
 const router = express.Router();
 
 router.get('/' ,setFilter, serviceTypeController.getServiceType);
-
 router.get('/:id', serviceTypeController.getOneServiceType);
+
 router.post('/',protected,isAdmin,upload.single('image'), serviceTypeController.createServiceType);
 router.put('/:id',protected,isAdmin, upload.single('image'),serviceTypeController.updateServiceType);
 router.delete('/:id',protected,isAdmin, serviceTypeController.deleteServiceType);

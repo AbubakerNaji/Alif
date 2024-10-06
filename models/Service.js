@@ -9,9 +9,14 @@ const ServicesTypeSchema = new mongoose.Schema({
         type: String,
         default: "No description",
     },
-    ServiceCategories: {
+    serviceCategories: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ServiceCategories",
+        required: true,
+    },
+    serviceDate : {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "ServiceDate",
         required: true,
     },
     isActive: {

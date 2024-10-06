@@ -1,7 +1,7 @@
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 const Kid = require("../models/Kid");
-const {User} = require("../models/User");
+const { User } = require("../models/User");
 const Favorite = require("../models/Favorite");
 const Location = require("../models/Location");
 
@@ -12,10 +12,11 @@ exports.updateOneAuth = (Model) =>
     } else {
       req.body.user = req.user._id;
     }
+    updates.updatedAt = Date.now();
 
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
-      new: true, 
-      runValidators: true, 
+      new: true,
+      runValidators: true,
     });
 
     if (!doc) return next(new AppError("No Entities found", 404));
@@ -53,7 +54,7 @@ exports.createOneAuth = (Model) =>
         user.favorites.push(newModel._id);
         break;
       default:
-        return next(new AppError("Unknown model type", 400)); 
+        return next(new AppError("Unknown model type", 400));
     }
 
     await user.save(); // Save the updated user document
@@ -69,7 +70,8 @@ exports.createOneAuth = (Model) =>
 
 exports.getWithFilterAuth = (Model) =>
   catchAsync(async (req, res, next) => {
-    const filter = req.filter || {};
+    const filter = { ...req.filter, deletedAt: null };
+
     let parentOrUser = "user";
 
     if (Model === Kid) {
@@ -91,41 +93,69 @@ exports.getWithFilterAuth = (Model) =>
     });
   });
 
-  exports.deleteOneAuth = (Model) =>
-    catchAsync(async (req, res, next) => {
-      let parentOrUser = "user";
-  
-      if (Model === Kid) {
-        parentOrUser = "parent";
-      }
-      
-  
-      const doc = await Model.findOneAndDelete({
-        _id: req.params.id,
-        [parentOrUser]: req.user._id,
-      });
-  
-      if (!doc) return next(new AppError("No entity found or you are not authorized to delete this", 404));
-  
-      const user = await User.findById(req.user._id);
-      switch (Model) {
-        case Kid:
-          user.kids = user.kids.filter(kidId => kidId.toString() !== req.params.id);
-          break;
-        case Location:
-          user.locations = user.locations.filter(locationId => locationId.toString() !== req.params.id);
-          break;
-        case Favorite:
-          user.favorites = user.favorites.filter(favoriteId => favoriteId.toString() !== req.params.id);
-          break;
-        default:
-          return next(new AppError("Unknown model type", 400));
-      }
-      await user.save();
-  
-      res.status(200).json({
-        status: "success",
-        message: "Entity was deleted successfully",
-      });
+exports.deleteOneAuth = (Model, relations = []) =>
+  catchAsync(async (req, res, next) => {
+    let parentOrUser = "user";
+
+    if (Model === Kid) {
+      parentOrUser = "parent";
+    }
+    let hasRelations = false;
+
+    
+
+    const doc = await Model.findById({
+      _id: req.params.id,
+      [parentOrUser]: req.user._id,
     });
-  
+
+    if (!doc)
+      return next(
+        new AppError(
+          "No entity found or you are not authorized to delete this",
+          404
+        )
+      );
+
+    for (const relation of relations) {
+      const relatedDocs = await doc.populate(relation).execPopulate();
+      if (relatedDocs[relation] && relatedDocs[relation].length > 0) {
+        hasRelations = true;
+        break;
+      }
+    }
+
+    if (hasRelations) {
+      doc.deletedAt = Date.now();
+      await doc.save();
+    } else {
+      await Model.findByIdAndDelete(req.params.id);
+    }
+
+    const user = await User.findById(req.user._id);
+    switch (Model) {
+      case Kid:
+        user.kids = user.kids.filter(
+          (kidId) => kidId.toString() !== req.params.id
+        );
+        break;
+      case Location:
+        user.locations = user.locations.filter(
+          (locationId) => locationId.toString() !== req.params.id
+        );
+        break;
+      case Favorite:
+        user.favorites = user.favorites.filter(
+          (favoriteId) => favoriteId.toString() !== req.params.id
+        );
+        break;
+      default:
+        return next(new AppError("Unknown model type", 400));
+    }
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      message: "Entity was deleted successfully",
+    });
+  });

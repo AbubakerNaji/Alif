@@ -10,8 +10,16 @@ exports.getUserLoggedIn = catchAsync(async (req, res, next) => {
     .populate("locations")
     .populate("favorites")
     .populate("wallet");
+
+  // if user.immage ==  "public/avatar.png"  make it null put dont show it
+  // if user.image == null make it "public/avatar.png" put dont show it
+
   if (!user) {
     return next(new AppError("You are not authorized", 404));
+  }
+
+  if (user.image === "public/avatar.png") {
+    user.image = null;
   }
   res.status(200).json({
     status: "success",
@@ -25,6 +33,8 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   if (req.body.deletedAt) {
     return next(new AppError("You cannot modify the deletedAt field", 400));
   }
+  
+  req.body.updatedAt = Date.now();
   const user = await User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
     runValidators: true,

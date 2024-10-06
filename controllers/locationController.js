@@ -10,6 +10,7 @@ const {
 } = require("./handlerFactoryLogin");
 
 exports.getMyLocations = getWithFilterAuth(Location);
+
 exports.AddLocation = createOneAuth(Location);
 exports.updateLocation = updateOneAuth(Location);
 exports.deleteLocation = deleteOneAuth(Location);
