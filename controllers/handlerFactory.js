@@ -12,7 +12,7 @@ exports.deleteOne = (Model, relations = []) =>
     let hasRelations = false;
 
     for (const relation of relations) {
-      const relatedDocs = await doc.populate(relation).execPopulate();
+      const relatedDocs = await doc.populate(relation);
       if (relatedDocs[relation] && relatedDocs[relation].length > 0) {
         hasRelations = true;
         break;

@@ -1,4 +1,3 @@
-const { use } = require("bcrypt/promises");
 const mongoose = require("mongoose");
 const LocationSchema = new mongoose.Schema({
   name: {

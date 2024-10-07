@@ -4,6 +4,7 @@ const Kid = require("../models/Kid");
 const { User } = require("../models/User");
 const Favorite = require("../models/Favorite");
 const Location = require("../models/Location");
+const Pass = require("../models/Pass");
 
 exports.updateOneAuth = (Model) =>
   catchAsync(async (req, res, next) => {
@@ -38,6 +39,14 @@ exports.createOneAuth = (Model) =>
       req.body.user = req.user._id;
     }
 
+    if (typeof req.body.serviceDate === "string") {
+      try {
+        req.body.serviceDate = JSON.parse(req.body.serviceDate);
+      } catch (err) {
+        req.body.serviceDate = [req.body.serviceDate];
+      }
+    }
+
     const newModel = new Model(req.body);
     await newModel.save();
 
@@ -52,6 +61,8 @@ exports.createOneAuth = (Model) =>
         break;
       case Favorite:
         user.favorites.push(newModel._id);
+        break;
+      case Pass:
         break;
       default:
         return next(new AppError("Unknown model type", 400));
@@ -79,7 +90,7 @@ exports.getWithFilterAuth = (Model, populateOptions = []) =>
     }
 
     // Dynamically add filter for user or parent
-    let query =  Model.find({
+    let query = Model.find({
       [parentOrUser]: req.user._id,
       ...filter,
     });
@@ -108,8 +119,6 @@ exports.deleteOneAuth = (Model, relations = []) =>
     }
     let hasRelations = false;
 
-    
-
     const doc = await Model.findById({
       _id: req.params.id,
       [parentOrUser]: req.user._id,
@@ -124,7 +133,7 @@ exports.deleteOneAuth = (Model, relations = []) =>
       );
 
     for (const relation of relations) {
-      const relatedDocs = await doc.populate(relation).execPopulate();
+      const relatedDocs = await doc.populate(relation);
       if (relatedDocs[relation] && relatedDocs[relation].length > 0) {
         hasRelations = true;
         break;
@@ -154,6 +163,8 @@ exports.deleteOneAuth = (Model, relations = []) =>
         user.favorites = user.favorites.filter(
           (favoriteId) => favoriteId.toString() !== req.params.id
         );
+        break;
+      case Pass:
         break;
       default:
         return next(new AppError("Unknown model type", 400));

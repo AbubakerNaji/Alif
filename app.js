@@ -19,6 +19,7 @@ const serviceRoutes = require('./routes/servicesRoutes/serviceRoutes');
 const serviceDateRoutes = require('./routes/servicesRoutes/serviceDateRoutes');
 const CompanyInfoRoutes = require('./routes/CompanyInfoRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
+const passRoutes = require('./routes/passRoutes');
 
 
 
@@ -51,6 +52,7 @@ app.use('/api/v1/service/', serviceRoutes);
 app.use('/api/v1/service/date', serviceDateRoutes);
 app.use('/api/v1/company', CompanyInfoRoutes);
 app.use('/api/v1/favorite', favoriteRoutes);
+app.use('/api/v1/pass', passRoutes);
 
 
 
