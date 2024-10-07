@@ -68,7 +68,7 @@ exports.createOneAuth = (Model) =>
     });
   });
 
-exports.getWithFilterAuth = (Model) =>
+exports.getWithFilterAuth = (Model, populateOptions = []) =>
   catchAsync(async (req, res, next) => {
     const filter = { ...req.filter, deletedAt: null };
 
@@ -79,10 +79,16 @@ exports.getWithFilterAuth = (Model) =>
     }
 
     // Dynamically add filter for user or parent
-    const getModels = await Model.find({
+    let query =  Model.find({
       [parentOrUser]: req.user._id,
       ...filter,
     });
+
+    populateOptions.forEach((option) => {
+      query = query.populate(option);
+    });
+
+    const getModels = await query;
 
     res.status(200).json({
       status: "success",

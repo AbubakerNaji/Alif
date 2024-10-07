@@ -1,5 +1,5 @@
-const { is } = require("express/lib/request");
 const mongoose = require("mongoose");
+
 const ServicesTypeSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -18,6 +18,10 @@ const ServicesTypeSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "ServiceDate",
     }],
+    companyInfo :{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "CompanyInfo",
+    },
     isActive: {
         type: Boolean,
         default: true,
@@ -65,5 +69,37 @@ const ServicesTypeSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+});
+ServicesTypeSchema.pre("save", async function (next) {
+    const Service = this;
+
+    console.log(Service.isNew);
+    if (Service.isNew) {
+        await mongoose.model("CompanyInfo").findByIdAndUpdate(Service.companyInfo, {
+            $addToSet: { services: Service._id }
+        });
+
+        await mongoose.model("ServicesCategories").findByIdAndUpdate(Service.serviceCategories, {
+            $addToSet: { services: Service._id } 
+        });
+    }
+
+    next();
+});
+
+ServicesTypeSchema.pre("findOneAndDelete", async function (next) {
+    const service = await this.model.findOne(this.getFilter());
+    
+    if (service) {
+        await mongoose.model("CompanyInfo").findByIdAndUpdate(service.companyInfo, {
+            $pull: { services: service._id }
+        });
+
+        await mongoose.model("ServiceCategories").findByIdAndUpdate(service.serviceCategories, {
+            $pull: { services: service._id }
+        });
+    }
+
+    next();
 });
 module.exports = mongoose.model("Service", ServicesTypeSchema)

@@ -45,6 +45,7 @@ exports.updateOne = (Model) =>
       updates.images = req.files.map((file) => file.path);
     }
     updates.updatedAt = Date.now();
+    
 
     const doc = await Model.findByIdAndUpdate(req.params.id, updates, {
       new: true,

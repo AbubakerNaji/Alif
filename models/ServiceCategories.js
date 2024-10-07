@@ -9,6 +9,11 @@ const ServicesTypeSchema = new mongoose.Schema({
         ref: "ServicesType",
         required: true,
     },
+    services: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Service",
+    }],
+
     deletedAt: {
         type: Date,
         default: null,

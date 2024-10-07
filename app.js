@@ -17,6 +17,9 @@ const serviceTypeRoute = require('./routes/servicesRoutes/serviceTypeRoute');
 const serviceCategoriesRoute = require('./routes/servicesRoutes/serviceCategoriesRoutes');
 const serviceRoutes = require('./routes/servicesRoutes/serviceRoutes');
 const serviceDateRoutes = require('./routes/servicesRoutes/serviceDateRoutes');
+const CompanyInfoRoutes = require('./routes/CompanyInfoRoutes');
+const favoriteRoutes = require('./routes/favoriteRoutes');
+
 
 
 
@@ -46,6 +49,10 @@ app.use('/api/v1/service/type', serviceTypeRoute);
 app.use('/api/v1/service/categories', serviceCategoriesRoute);
 app.use('/api/v1/service/', serviceRoutes);
 app.use('/api/v1/service/date', serviceDateRoutes);
+app.use('/api/v1/company', CompanyInfoRoutes);
+app.use('/api/v1/favorite', favoriteRoutes);
+
+
 
 
 
