@@ -14,11 +14,10 @@ const ServicesTypeSchema = new mongoose.Schema({
         ref: "ServiceCategories",
         required: true,
     },
-    serviceDate : {
+    serviceDate :[ {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ServiceDate",
-        required: true,
-    },
+    }],
     isActive: {
         type: Boolean,
         default: true,

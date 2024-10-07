@@ -15,6 +15,10 @@ const locationRoutes = require('./routes/locationRoutes');
 const myUserRoutes = require('./routes/myUserRoutes');
 const serviceTypeRoute = require('./routes/servicesRoutes/serviceTypeRoute');
 const serviceCategoriesRoute = require('./routes/servicesRoutes/serviceCategoriesRoutes');
+const serviceRoutes = require('./routes/servicesRoutes/serviceRoutes');
+const serviceDateRoutes = require('./routes/servicesRoutes/serviceDateRoutes');
+
+
 
 
 
@@ -37,9 +41,12 @@ app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/kids', kidsRoutes);
 app.use('/api/v1/location', locationRoutes);
 app.use('/api/v1/user', myUserRoutes);
-app.use('/api/v1/service/type', serviceTypeRoute);
 
+app.use('/api/v1/service/type', serviceTypeRoute);
 app.use('/api/v1/service/categories', serviceCategoriesRoute);
+app.use('/api/v1/service/', serviceRoutes);
+app.use('/api/v1/service/date', serviceDateRoutes);
+
 
 
 

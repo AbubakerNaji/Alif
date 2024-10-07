@@ -65,6 +65,8 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const newModelData = { ...req.body };
+    console.log(newModelData);
+    console.log(req.body);
     if (req.file) {
       newModelData.image = req.file.path;
     } else if (req.files) {
@@ -106,22 +108,27 @@ exports.getOne = (Model) =>
       },
     });
   });
-
-exports.getWithFilter = (Model) =>
-  catchAsync(async (req, res, next) => {
-    const filter = { ...req.filter, deletedAt: null };
-
-    const getModels = await Model.find(filter);
-    //const getModels = queryModel.exec();
-
-    res.status(200).json({
-      status: "success",
-      message: "Got the Selected Entitie Successfully",
-      data: {
-        data: getModels,
-      },
+  exports.getWithFilter = (Model, populateOptions = []) =>
+    catchAsync(async (req, res, next) => {
+      const filter = { ...req.filter, deletedAt: null };
+  
+      let query = Model.find(filter);
+  
+      populateOptions.forEach((option) => {
+        query = query.populate(option);
+      });
+  
+      const getModels = await query;
+  
+      res.status(200).json({
+        status: "success",
+        message: "Got the Selected Entities Successfully",
+        data: {
+          data: getModels,
+        },
+      });
     });
-  });
+  
 
 exports.setFilter = catchAsync(async (req, res, next) => {
   let filter = req.body || {};
