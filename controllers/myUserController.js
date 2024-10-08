@@ -33,7 +33,12 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   if (req.body.deletedAt) {
     return next(new AppError("You cannot modify the deletedAt field", 400));
   }
-  
+
+  if (req.file) {
+    req.body.image = req.file.path;
+  } else if (req.files) {
+    req.body.images = req.files.map((file) => file.path);
+  }
   req.body.updatedAt = Date.now();
   const user = await User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
@@ -68,4 +73,3 @@ exports.deleteUser = catchAsync(async (req, res, next) => {
     },
   });
 });
-

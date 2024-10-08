@@ -13,7 +13,7 @@ exports.updateOneAuth = (Model) =>
     } else {
       req.body.user = req.user._id;
     }
-    updates.updatedAt = Date.now();
+    req.body.updatedAt = Date.now();
 
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,

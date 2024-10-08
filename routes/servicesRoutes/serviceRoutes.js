@@ -1,6 +1,6 @@
 const express = require("express");
 const serviceController = require("../../controllers/servicesControllers/serviceController");
-const { setFilter } = require("../../controllers/handlerFactory");
+const { setFilter , addlocations } = require("../../controllers/handlerFactory");
 const { protected, isAdmin } = require("../../utils/middleware/protected");
 const upload = require('../../controllers/multiController');
 
@@ -17,6 +17,7 @@ router.post(
     { name: "mainImage", maxCount: 1 },
     { name: "images", maxCount: 5 },
   ]),
+  addlocations,
   serviceController.AddService
 );
 
@@ -26,6 +27,7 @@ router.put(
     protected,
     isAdmin,
     upload.fields([{ name: 'mainImage', maxCount: 1 }, { name: 'images', maxCount: 5 }]), 
+    addlocations,
     serviceController.updateService
   );
 

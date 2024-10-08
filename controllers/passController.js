@@ -8,7 +8,7 @@ const {
   createOneAuth,
 } = require("./handlerFactoryLogin");
 
-exports.getPasses = getWithFilterAuth(Pass, ["kid", "service", "serviceDate"]);
+exports.getPasses = getWithFilterAuth(Pass, ["kid", "service", "serviceDate","driver"]);
 
 exports.AddPass = createOneAuth(Pass);
 exports.updatePass = catchAsync(async (req, res, next) => {

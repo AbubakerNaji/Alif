@@ -20,6 +20,7 @@ const serviceDateRoutes = require('./routes/servicesRoutes/serviceDateRoutes');
 const CompanyInfoRoutes = require('./routes/CompanyInfoRoutes');
 const favoriteRoutes = require('./routes/favoriteRoutes');
 const passRoutes = require('./routes/passRoutes');
+const driverRoutes = require('./routes/driverRoutes');
 
 
 
@@ -53,6 +54,7 @@ app.use('/api/v1/service/date', serviceDateRoutes);
 app.use('/api/v1/company', CompanyInfoRoutes);
 app.use('/api/v1/favorite', favoriteRoutes);
 app.use('/api/v1/pass', passRoutes);
+app.use('/api/v1/driver', driverRoutes);
 
 
 

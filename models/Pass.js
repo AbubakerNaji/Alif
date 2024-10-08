@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const Service = require("./Service");
+const Driver = require("./driver");
 
 const PassScheme = mongoose.Schema({
   serviceDate: [
@@ -11,11 +12,11 @@ const PassScheme = mongoose.Schema({
       required: true,
     },
   ],
-    invoice: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Invoice",
-      required: true,
-    },
+  invoice: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Invoice",
+    required: true,
+  },
   service: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Service",
@@ -30,6 +31,10 @@ const PassScheme = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
+  },
+  driver: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Driver",
   },
 
   payedAmount: {
@@ -66,9 +71,7 @@ const PassScheme = mongoose.Schema({
 PassScheme.pre("save", function (next) {
   catchAsync(async (next) => {
     if (this.isNew || this.isModified("service")) {
-      const service = await Service.findById(this.service).populate(
-        "serviceDate"
-      ); // Populate service dates
+      const service = await Service.findById(this.service).populate("serviceDate");
 
       if (!service) {
         return next(new AppError("Service not found", 404));
@@ -76,13 +79,21 @@ PassScheme.pre("save", function (next) {
 
       this.costAmount = service.price;
 
-      if (service.serviceDate.length === 1) {
-        this.serviceDate = [service.serviceDate[0]];
-      } else if (service.serviceDate.length > 1) {
-        if (!this.serviceDate || this.serviceDate.length === 0) {
-          return next(new AppError("Please add a service date", 400));
-        }
+      const userLocation = await mongoose.model("Location").findOne({ user: this.user });
+      const nearestDriver = await Driver.findOne({
+        location: {
+          $near: {
+            $geometry: { type: "Point", coordinates: userLocation.location.coordinates },
+            $maxDistance: 5000, 
+          },
+        },
+      });
+
+      if (!nearestDriver) {
+        return next(new AppError("No drivers found nearby", 404));
       }
+
+      this.driver = nearestDriver._id; 
     }
 
     next();

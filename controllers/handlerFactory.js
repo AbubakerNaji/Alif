@@ -66,8 +66,7 @@ exports.updateOne = (Model) =>
 exports.createOne = (Model) =>
   catchAsync(async (req, res, next) => {
     const newModelData = { ...req.body };
-    console.log(newModelData);
-    console.log(req.body);
+   
     if (req.file) {
       newModelData.image = req.file.path;
     } else if (req.files) {
@@ -134,5 +133,26 @@ exports.getOne = (Model) =>
 exports.setFilter = catchAsync(async (req, res, next) => {
   let filter = req.body || {};
   req.filter = filter;
+  next();
+});
+
+
+exports.addlocations = catchAsync(async (req, res, next) => {
+  let location = null;
+
+  if (req.body["longitude"] && req.body["latitude"]) {
+    location = {
+      type: "Point",
+      coordinates: [
+        parseFloat(req.body["latitude"]),
+        parseFloat(req.body["longitude"]),
+      ],
+    };
+  }
+
+  if (location) {
+    req.body.location = location;
+  }
+
   next();
 });
