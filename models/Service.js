@@ -89,6 +89,8 @@ const ServicesTypeSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
+
+
 ServicesTypeSchema.pre("save", async function (next) {
   const Service = this;
 

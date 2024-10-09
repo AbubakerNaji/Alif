@@ -43,7 +43,11 @@ exports.updateUser = catchAsync(async (req, res, next) => {
   const user = await User.findByIdAndUpdate(req.user._id, req.body, {
     new: true,
     runValidators: true,
-  });
+  })
+    .populate("kids")
+    .populate("locations")
+    .populate("favorites")
+    .populate("wallet");
   if (!user) {
     return next(new AppError("You are not authorized", 404));
   }

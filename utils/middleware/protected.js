@@ -17,7 +17,7 @@ const protected = catchAsync(async (req, res, next) => {
       new AppError("You are not logged in! Please log in to get access.", 401)
     );
   }
-
+  
   const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
   const currentUser = await User.findById(decoded.id);

@@ -85,7 +85,7 @@ exports.login = catchAsync(async (req, res, next) => {
   }
   const userWithoutPassword = user.toObject();
   delete userWithoutPassword.password;
-
+  
   const token = signToken(user._id);
   res.status(200).json({
     status: "success",
