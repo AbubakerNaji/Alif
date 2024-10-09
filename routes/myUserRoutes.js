@@ -9,5 +9,6 @@ const router = express.Router();
 router.get('/' ,protected,setFilter, myuserController.getUserLoggedIn);
 router.delete('/',protected, myuserController.deleteUser);
 router.put('/',protected, upload.single("image") , myuserController.updateUser);
+router.patch("/updatePassword", protected, myuserController.updatePassword);
 
 module.exports = router

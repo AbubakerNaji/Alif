@@ -2,16 +2,12 @@ const jwt = require("jsonwebtoken");
 const { User, Role } = require("../models/User");
 const Wallet = require("../models/Wallet");
 const catchAsync = require("../utils/catchAsync");
+const {signToken} = require("../utils/middleware/protected");
 //add apperror required
 const AppError = require("../utils/appError");
 const fs = require("fs");
 const path = require("path");
 
-const signToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
-  });
-};
 
 exports.signup = catchAsync(async (req, res, next) => {
   try {
