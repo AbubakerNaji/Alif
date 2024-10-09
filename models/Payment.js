@@ -9,7 +9,7 @@ const PaymentType = Object.freeze({
 
 const PaymentMethod = Object.freeze({
   CASH: "CASH",
-  SADAD: "SADAD",
+  ADFALI: "ADFALI",
 });
 
 const PaymentSchema = new mongoose.Schema({
@@ -33,6 +33,10 @@ const PaymentSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true,
+  },
+  isPaid: {
+    type: Boolean,
+    default: false,
   },
   //add paymentID
   createdAt: {

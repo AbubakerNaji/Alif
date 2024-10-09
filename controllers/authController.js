@@ -38,7 +38,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     newUser.wallet = newWallet._id;
     await newUser.save();
 
-    const userWithoutPassword = newUser.toObject();
+    const userWithoutPassword = (await newUser.populate("wallet")).toObject();
     delete userWithoutPassword.password;
 
     const token = signToken(newUser._id);
@@ -47,7 +47,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       token,
       data: {
         user: userWithoutPassword,
-        wallet: newWallet,
+       // wallet: newWallet,
       },
     });
   } catch (err) {
@@ -74,7 +74,7 @@ exports.login = catchAsync(async (req, res, next) => {
   const user = await User.findOne({ email, deletedAt: null }).select("+password");
  // const user = await User.findOne({ email }).select("+password");
 
-  //await user.populate("kids");
+  await user.populate("wallet");
 
   if (!user || !(await user.matchPassword(password))) {
     return next(new AppError("Incorrect email or password", 401));
