@@ -111,9 +111,16 @@ exports.getOne = (Model) =>
   exports.getWithFilter = (Model, populateOptions = []) =>
     catchAsync(async (req, res, next) => {
       const filter = { ...req.filter, deletedAt: null };
-  
+      //console.log(filter);
       let query = Model.find(filter);
   
+      if (req.body.sort) {
+        query = query.sort({ createdAt: -1 });
+      }
+      if (req.body.requestLimit) {
+        query = query.limit(req.body.requestLimit);
+      }
+     
       populateOptions.forEach((option) => {
         query = query.populate(option);
       });
@@ -131,7 +138,8 @@ exports.getOne = (Model) =>
   
 
 exports.setFilter = catchAsync(async (req, res, next) => {
-  let filter = req.body || {};
+  let { requestLimit, sort, ...filter } = req.body || {};
+ // let filter = req.body || {};
   req.filter = filter;
   next();
 });

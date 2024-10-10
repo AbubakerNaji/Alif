@@ -8,7 +8,7 @@ const PaymentType = Object.freeze({
 });
 
 const PaymentMethod = Object.freeze({
-  CASH: "CASH",
+  WALLET: "WALLET",
   ADFALI: "ADFALI",
 });
 
@@ -38,6 +38,7 @@ const PaymentSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+ 
   //add paymentID
   createdAt: {
     type: Date,
@@ -56,9 +57,9 @@ const PaymentSchema = new mongoose.Schema({
 Object.freeze(PaymentType);
 Object.freeze(PaymentMethod);
 
-module.exports = mongoose.model("Payment", PaymentSchema);
 
 module.exports = {
   PaymentType,
   PaymentMethod,
+  Payment :  mongoose.model("Payment", PaymentSchema)
 };

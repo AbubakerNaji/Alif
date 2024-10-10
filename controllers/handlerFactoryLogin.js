@@ -95,6 +95,10 @@ exports.getWithFilterAuth = (Model, populateOptions = []) =>
       ...filter,
     });
 
+    if (req.body.requestLimit) {
+      query = query.limit(req.body.requestLimit);
+    }
+
     populateOptions.forEach((option) => {
       query = query.populate(option);
     });
