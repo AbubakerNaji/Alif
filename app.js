@@ -40,7 +40,7 @@ app.use(compression());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "public")));
+app.use("/public/",express.static(path.join(__dirname, "/public/")));
 
 connectMongoDB();
 app.get("/", (req, res) => res.send("Hello World!"));
