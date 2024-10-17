@@ -20,7 +20,7 @@ const {
 
 exports.getServices = getWithFilter(Service);
 
-exports.getWithDatesServices = getWithFilter(Service, ["serviceDate"]);
+exports.getWithDatesServices = getWithFilter(Service, ["serviceDate","serviceCategories"]);
 
 //
 
