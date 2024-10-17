@@ -11,7 +11,7 @@ const ServicesTypeSchema = new mongoose.Schema({
   },
   serviceCategories: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "ServiceCategories",
+    ref: "ServicesCategories",
     required: true,
   },
   serviceDate: [
